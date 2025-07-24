@@ -4,11 +4,12 @@ import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
+import java.util.UUID
 
 @Document("todos")
 data class Todos(
-    @Id val id : ObjectId = ObjectId.get(),
+    @Id val id: UUID = UUID.randomUUID(),
     val title : String,
     val createdAt : Instant = Instant.now(),
-    val isDone: Boolean = false,
+    val isDone: Boolean,
 )

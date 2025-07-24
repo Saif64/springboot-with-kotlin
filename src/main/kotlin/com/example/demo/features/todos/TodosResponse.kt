@@ -5,13 +5,17 @@ import org.springframework.data.annotation.Id
 import java.time.Instant
 
 data class TodosResponse(
-    @Id val id: ObjectId,
+    val id: String,
     val title: String,
     val createdAt: Instant,
     val isDone: Boolean,
 )
 
 data class TodosPayload(
-    val id: ObjectId,
     val title: String
+)
+
+data class TodosUpdatePayload(
+    val title: String?,
+    val isDone: Boolean?
 )
