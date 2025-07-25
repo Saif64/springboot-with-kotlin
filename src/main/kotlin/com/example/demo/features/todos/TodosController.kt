@@ -39,4 +39,9 @@ class TodosController(private val todoService: TodoService) {
     fun updateTodo(@PathVariable id: UUID, @RequestBody body: TodosUpdatePayload): TodosResponse? {
         return todoService.updateTodo(id, body)
     }
+
+    @GetMapping("/status/{isDone}")
+    fun getTodoByStatus(@PathVariable isDone: Boolean): List<TodosResponse>? = todoService.getTodoByStatus(
+        isDone = isDone
+    )
 }

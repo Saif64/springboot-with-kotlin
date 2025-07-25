@@ -11,6 +11,7 @@ interface TodoService {
     fun deleteAllTasks() : String
     fun updateTodo(id: UUID ,body: TodosUpdatePayload) : TodosResponse?
     fun getTodoById(id: UUID) : TodosResponse?
+    fun getTodoByStatus(isDone: Boolean) : List<TodosResponse>?
 
 }
 
@@ -68,6 +69,19 @@ class TodosServiceImpl(private val todoRepository: TodoRepository) : TodoService
             createdAt = savedTodo.createdAt,
             isDone = savedTodo.isDone,
         )
+    }
+
+    override fun getTodoByStatus(isDone: Boolean): List<TodosResponse>? {
+        val todos = todoRepository.findAll()
+
+        return  todos.filter { it.isDone == isDone }.map {
+            TodosResponse(
+                id = it.id.toString(),
+                title = it.title,
+                createdAt = it.createdAt,
+                isDone = it.isDone,
+            )
+        }
     }
 
 }
