@@ -1,6 +1,9 @@
 package com.example.demo.features.todos
 
-import org.bson.types.ObjectId
+import com.example.demo.util.ApiResponse
+import com.example.demo.util.buildSuccessResponse
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -16,32 +19,39 @@ import java.util.UUID
 class TodosController(private val todoService: TodoService) {
 
     @PostMapping
-    fun createTodo(@RequestBody payload: TodosPayload): TodosResponse {
-        return todoService.createTodos(payload)
+    fun createTodo(@RequestBody payload: TodosPayload): ResponseEntity<ApiResponse<TodosResponse>> {
+        val createdTodo = todoService.createTodos(payload)
+        return buildSuccessResponse(createdTodo, HttpStatus.CREATED)
     }
 
     @GetMapping
-    fun getAllTodos(): List<Todos> {
-        return todoService.getAllTodos()
+    fun getAllTodos(): ResponseEntity<ApiResponse<List<Todos>>> {
+        return buildSuccessResponse(todoService.getAllTodos())
     }
 
     @DeleteMapping
-    fun deleteAllTasks(): String {
-        return todoService.deleteAllTasks()
+    fun deleteAllTasks(): ResponseEntity<ApiResponse<String>> {
+        return buildSuccessResponse(todoService.deleteAllTasks())
     }
 
     @GetMapping("/{id}")
-    fun getTodoById(@PathVariable id: UUID): TodosResponse? {
-        return todoService.getTodoById(id)
+    fun getTodoById(@PathVariable id: UUID): ResponseEntity<ApiResponse<TodosResponse?>> {
+        return buildSuccessResponse(todoService.getTodoById(id))
     }
 
     @PatchMapping("/{id}")
-    fun updateTodo(@PathVariable id: UUID, @RequestBody body: TodosUpdatePayload): TodosResponse? {
-        return todoService.updateTodo(id, body)
+    fun updateTodo(
+        @PathVariable id: UUID,
+        @RequestBody body: TodosUpdatePayload
+    ): ResponseEntity<ApiResponse<TodosResponse?>> {
+        return buildSuccessResponse(todoService.updateTodo(id, body))
     }
 
     @GetMapping("/status/{isDone}")
-    fun getTodoByStatus(@PathVariable isDone: Boolean): List<TodosResponse>? = todoService.getTodoByStatus(
-        isDone = isDone
-    )
+    fun getTodoByStatus(@PathVariable isDone: Boolean): ResponseEntity<ApiResponse<List<TodosResponse>?>> =
+        buildSuccessResponse(
+            todoService.getTodoByStatus(
+                isDone = isDone
+            )
+        )
 }

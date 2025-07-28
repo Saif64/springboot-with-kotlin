@@ -7,4 +7,5 @@ import java.util.UUID
 
 @Repository
 interface TodoRepository : MongoRepository<Todos, UUID > {
+    fun findByIsDone(isDone: Boolean): List<Todos>
 }

@@ -29,12 +29,7 @@ class TodosServiceImpl(private val todoRepository: TodoRepository) : TodoService
             )
         )
 
-        return TodosResponse(
-            id = todo.id.toString(),
-            title = todo.title,
-            createdAt = todo.createdAt,
-            isDone = todo.isDone,
-        )
+        return todo.toResponse()
     }
 
     override fun deleteAllTasks(): String {
@@ -43,14 +38,7 @@ class TodosServiceImpl(private val todoRepository: TodoRepository) : TodoService
     }
 
     override fun getTodoById(id: UUID): TodosResponse? {
-        return todoRepository.findById(id).map {
-            TodosResponse(
-                id = it.id.toString(),
-                title = it.title,
-                createdAt = it.createdAt,
-                isDone = it.isDone,
-            )
-        }.orElse(null)
+        return todoRepository.findById(id).map { it.toResponse() }.orElse(null)
     }
 
     override fun updateTodo(id: UUID, body: TodosUpdatePayload): TodosResponse? {
@@ -63,25 +51,18 @@ class TodosServiceImpl(private val todoRepository: TodoRepository) : TodoService
 
         val savedTodo = todoRepository.save(updatedTodo)
 
-        return TodosResponse(
-            id = savedTodo.id.toString(),
-            title = savedTodo.title,
-            createdAt = savedTodo.createdAt,
-            isDone = savedTodo.isDone,
-        )
+        return savedTodo.toResponse()
     }
 
     override fun getTodoByStatus(isDone: Boolean): List<TodosResponse>? {
-        val todos = todoRepository.findAll()
-
-        return  todos.filter { it.isDone == isDone }.map {
-            TodosResponse(
-                id = it.id.toString(),
-                title = it.title,
-                createdAt = it.createdAt,
-                isDone = it.isDone,
-            )
-        }
+        return todoRepository.findByIsDone(isDone)
+            .map { it.toResponse() }
     }
 
+    private fun Todos.toResponse(): TodosResponse = TodosResponse(
+        id = this.id.toString(),
+        title = this.title,
+        createdAt = this.createdAt,
+        isDone = this.isDone
+    )
 }
