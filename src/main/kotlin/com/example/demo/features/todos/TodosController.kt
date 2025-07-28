@@ -1,6 +1,7 @@
 package com.example.demo.features.todos
 
 import com.example.demo.util.ApiResponse
+import com.example.demo.util.buildNotFoundResponse
 import com.example.demo.util.buildSuccessResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -34,9 +35,23 @@ class TodosController(private val todoService: TodoService) {
         return buildSuccessResponse(todoService.deleteAllTasks())
     }
 
+    @DeleteMapping("/{id}")
+    fun deleteTaskById(@PathVariable id: UUID): ResponseEntity<ApiResponse<String?>> {
+        val todo = todoService.deleteTaskById(id)
+
+        return todo?.let {
+            buildSuccessResponse(it)
+        } ?:buildNotFoundResponse("Resource Not Found", "Todo with id '$id' not found.")
+    }
+
     @GetMapping("/{id}")
-    fun getTodoById(@PathVariable id: UUID): ResponseEntity<ApiResponse<TodosResponse?>> {
-        return buildSuccessResponse(todoService.getTodoById(id))
+    fun getTodoById(@PathVariable id: UUID): ResponseEntity<ApiResponse<TodosResponse>> {
+
+        val todo = todoService.getTodoById(id)
+
+        return todo?.let {
+            buildSuccessResponse(it)
+        } ?: buildNotFoundResponse("Resource Not Found", "Todo with id '$id' not found.")
     }
 
     @PatchMapping("/{id}")
@@ -54,4 +69,6 @@ class TodosController(private val todoService: TodoService) {
                 isDone = isDone
             )
         )
+
+
 }
