@@ -24,6 +24,7 @@ class SecurityConfig {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers("/public/**").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
                     .anyRequest().authenticated()
             }
             .httpBasic(Customizer.withDefaults())
@@ -38,7 +39,7 @@ class SecurityConfig {
     @Bean
     fun userDetailsService(passwordEncoder: PasswordEncoder): UserDetailsService {
         val user = User.withUsername("test")
-            .password(passwordEncoder.encode("1234")) // IMPORTANT: Encode the password
+            .password(passwordEncoder.encode("1234"))
             .roles("USER")
             .build()
 
