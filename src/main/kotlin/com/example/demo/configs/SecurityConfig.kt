@@ -34,6 +34,7 @@ class SecurityConfig(
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers("/public/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/web/**").permitAll()
                     .anyRequest().authenticated()
             }
             .authenticationProvider(authenticationProvider)
@@ -41,20 +42,4 @@ class SecurityConfig(
             .httpBasic(Customizer.withDefaults())
             .build()
     }
-
-
-//    @Bean
-//    fun userDetailsService(passwordEncoder: PasswordEncoder): UserDetailsService {
-//        val user = User.withUsername("user")
-//            .password(passwordEncoder.encode("password"))
-//            .roles("USER")
-//            .build()
-//
-//        val admin = User.withUsername("admin")
-//            .password(passwordEncoder.encode("admin"))
-//            .roles("ADMIN", "USER")
-//            .build()
-//
-//        return InMemoryUserDetailsManager(user, admin)
-//    }
 }
