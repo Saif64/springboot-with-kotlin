@@ -12,4 +12,5 @@ data class Todos(
     val title : String,
     val createdAt : Instant = Instant.now(),
     val isDone: Boolean,
+    val userId: UUID
 )

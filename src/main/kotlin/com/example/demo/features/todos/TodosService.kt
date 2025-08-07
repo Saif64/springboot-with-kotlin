@@ -1,6 +1,8 @@
 package com.example.demo.features.todos
 
+import com.example.demo.features.auth.AuthRepository
 import org.bson.types.ObjectId
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.UUID
@@ -8,28 +10,39 @@ import java.util.UUID
 interface TodoService {
     fun getAllTodos(): List<Todos>
     fun createTodos(body: TodosPayload): TodosResponse
-    fun deleteAllTasks() : String
-    fun updateTodo(id: UUID ,body: TodosUpdatePayload) : TodosResponse?
-    fun deleteTaskById(id: UUID) : String?
-    fun getTodoById(id: UUID) : TodosResponse?
-    fun getTodoByStatus(isDone: Boolean) : List<TodosResponse>?
+    fun deleteAllTasks(): String
+    fun updateTodo(id: UUID, body: TodosUpdatePayload): TodosResponse?
+    fun deleteTaskById(id: UUID): String?
+    fun getTodoById(id: UUID): TodosResponse?
+    fun getTodoByStatus(isDone: Boolean): List<TodosResponse>?
 
 }
 
 @Service
-class TodosServiceImpl(private val todoRepository: TodoRepository) : TodoService {
+class TodosServiceImpl(private val todoRepository: TodoRepository, private val authRepository: AuthRepository) :
+    TodoService {
+
+    private fun getCurrentUserId(): UUID {
+        val username = SecurityContextHolder.getContext().authentication.name
+        val user = authRepository.findByUsername(username)
+        return user!!.id
+    }
+
+
     override fun getAllTodos(): List<Todos> {
-        return todoRepository.findAll()
+        val userId = getCurrentUserId()
+        return todoRepository.findByUserId(userId)
     }
 
     override fun createTodos(body: TodosPayload): TodosResponse {
+        val userId = getCurrentUserId()
         val todo = todoRepository.save(
             Todos(
                 title = body.title,
                 isDone = false,
+                userId = userId // Set the userId
             )
         )
-
         return todo.toResponse()
     }
 
